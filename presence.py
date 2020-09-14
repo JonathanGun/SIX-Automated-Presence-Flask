@@ -14,7 +14,7 @@ import re
 # 3 : Presence form not opened yet
 # 4 : Presence form filled successfully
 # 5 : Presence form already filled
-def presence(username, password, success_callback=lambda: None, delay=8, headless=True, logging=None):
+def presence(username, password, success_callback=lambda: None, delay=8, headless=True, logging=None, webdriver_path=None):
     if not logging:
         import logging
         # Setup logging config
@@ -27,7 +27,12 @@ def presence(username, password, success_callback=lambda: None, delay=8, headles
         options = Options()
         if(headless):
             options.add_argument("--headless")
-        driver = webdriver.Firefox(options=options)
+        args = {
+            "options": options,
+        }
+        if webdriver_path:
+            args["executable_path"] = webdriver_path
+        driver = webdriver.Firefox(**args)
         actions = ActionChains(driver)
 
         # Main page
