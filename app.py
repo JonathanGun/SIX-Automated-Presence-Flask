@@ -17,6 +17,7 @@ message = {
 
 option = Options()
 option.add_argument("--headless")
+exec_path = None
 
 @app.route("/", methods=["POST"])
 def main():
@@ -25,7 +26,9 @@ def main():
     args = {
         "username": request.json["credentials"]["username"],
         "password": request.json["credentials"]["password"],
-        "logging": app.logger
+        "logging": app.logger,
+        "executable_path": exec_path,
+        "option": option,
     }
     app.logger.info("Username: " + args["username"])
 
@@ -48,3 +51,4 @@ if __name__ != "__main__":
     option.binary_location = os.getenv('FIREFOX_BIN')
     option.add_argument('--disable-gpu')
     option.add_argument('--no-sandbox')
+    exec_path = os.getenv('GECKODRIVER_BIN')

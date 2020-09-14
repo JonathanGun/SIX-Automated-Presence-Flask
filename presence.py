@@ -31,7 +31,7 @@ def presence(username, password, success_callback=lambda: None, delay=8, headles
         args = {
             "options": options,
         }
-        if executable_path is None:
+        if executable_path is not None:
             args["executable_path"] = executable_path
         driver = webdriver.Firefox(**args)
         actions = ActionChains(driver)
