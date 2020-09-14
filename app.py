@@ -28,7 +28,7 @@ def main():
         "password": request.json["credentials"]["password"],
         "logging": app.logger,
         "executable_path": exec_path,
-        "option": option,
+        "options": option,
     }
     app.logger.info("Username: " + args["username"])
 
