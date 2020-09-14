@@ -1,4 +1,5 @@
 import os
+import time
 from selenium.webdriver.firefox.options import Options
 from flask import Flask, jsonify, request, abort
 app = Flask(__name__)
@@ -6,18 +7,38 @@ app = Flask(__name__)
 import logging
 logging.basicConfig(format='[%(asctime)s] - %(message)s', datefmt='%d %b %H:%M:%S', level=logging.INFO)
 
-from presence import presence
-message = {
-    1: "Invalid password",
-    2: "There's currently no class",
-    3: "Presence form not opened yet",
-    4: "Presence form filled successfully",
-    5: "Presence form already filled",
-}
+from rq import Queue
+from worker import conn
+
+q = Queue(connection=conn)
+
+
+from presence import presence, results
+
+
+def myhash(d1, i):
+    return str(hash(concat_dict(d1) + str(i)))
+
+def concat_dict(d):
+    s = ""
+    for key, val in d.items():
+        s += str(key)
+        try:
+            s += map(str, val.to_list())
+        except Exception:
+            s += str(val)
+    return s
 
 option = Options()
 option.add_argument("--headless")
 exec_path = None
+
+@app.route("/check/<str:token>", methods=["GET"])
+def check(token):
+    if token in results:
+        return jsonify(results[token]), 200
+    else:
+        return jsonify({"message": "Token is not valid"}), 404
 
 @app.route("/", methods=["POST"])
 def main():
@@ -30,16 +51,13 @@ def main():
         "executable_path": exec_path,
         "options": option,
     }
+
     app.logger.info("Username: " + args["username"])
-
-    code, classname = presence(**args)
-    app.logger.info("Finished with code: " + str(code) + " | " + message[code])
-
+    q.enqueue(presence, **args)
     return jsonify({
-        "code": code,
-        "class": classname,
-        "message": message[code],
-    }), 200
+        "token": myhash(args, time.time()),
+    }), 202
+
 
 if __name__ == "__main__":
     app.run(debug=False)

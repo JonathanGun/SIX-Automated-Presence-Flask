@@ -8,13 +8,25 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time
 import re
 
-# Returns a tuple to indicate status (code, class)
-# 1 : Invalid password
-# 2 : There's currently no class
-# 3 : Presence form not opened yet
-# 4 : Presence form filled successfully
-# 5 : Presence form already filled
-def presence(username, password, success_callback=lambda: None, delay=8, headless=True, logging=None, executable_path=None, options=None):
+
+results = {}
+message = {
+    1: "Invalid password",
+    2: "There's currently no class",
+    3: "Presence form not opened yet",
+    4: "Presence form filled successfully",
+    5: "Presence form already filled",
+}
+def presence(**kwargs):
+    code, classname = presence_util(**kwargs)
+    if "key" in kwargs:
+        results[kwargs["key"]] = {
+            "code": code,
+            "class": classname,
+            "message": message[code],
+        }
+
+def presence_util(username, password, success_callback=lambda: None, delay=8, headless=True, logging=None, executable_path=None, options=None, key=None, **kwargs):
     if not logging:
         import logging
         # Setup logging config
@@ -98,7 +110,7 @@ def presence(username, password, success_callback=lambda: None, delay=8, headles
                     presence_button = driver.find_element_by_id('form_hadir')
                     presence_button.click()
                     logging.info('Presence successful')
-                    success_callback()
+                    success_callback(classes_code[index])
                     return (4, classes_code[index])
                 except Exception:
                     logging.info('Presence form currently closed for {}'.format(classes_code[index]))
@@ -112,5 +124,4 @@ def presence(username, password, success_callback=lambda: None, delay=8, headles
     except Exception as exc:
         logging.exception(exc)
     finally:
-        time.sleep(5)
         driver.close()
