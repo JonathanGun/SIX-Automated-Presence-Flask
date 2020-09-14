@@ -13,8 +13,6 @@ message = {
     5: "Presence form already filled",
 }
 
-PATH = None
-
 @app.route("/", methods=["POST"])
 def main():
     if not request.json or "credentials" not in request.json:
@@ -24,8 +22,6 @@ def main():
         "password": request.json["credentials"]["password"],
         "logging": app.logger,
     }
-    if PATH:
-        args["webdriver_path"] = PATH
     app.logger.info("Username: " + args["username"])
     code, classname = presence(**args)
     app.logger.info("Finished with code: " + str(code) + " | " + message[code])
@@ -43,4 +39,3 @@ if __name__ != "__main__":
     gunicorn_logger = logging.getLogger("gunicorn.error")
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
-    PATH = "/usr/local/bin:/usr/bin:/bin:/app/vendor/"
