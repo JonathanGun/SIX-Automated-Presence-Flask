@@ -33,7 +33,7 @@ option = Options()
 option.add_argument("--headless")
 exec_path = None
 
-@app.route("/check/<str:token>", methods=["GET"])
+@app.route("/check/<string:token>", methods=["GET"])
 def check(token):
     if token in results:
         return jsonify(results[token]), 200
