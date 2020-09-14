@@ -1,4 +1,3 @@
-
 # SIX Automated Presence - Flask Server
 Modified version of [SIX Automated Presence](https://github.com/mkamadeus/SIX-Automated-Presence)
 Thank you [Matthew Kevin (MK)](https://github.com/mkamadeus/) for doing all the heavy lifting
@@ -20,15 +19,21 @@ python app.py
 3. POST
 ```
 /POST http://localhost:5000/
-{
+"headers": {
+  "Content-Type": "application/json",
+},
+"payload": {
 	"credentials": {
 		"username": "anak_imba",
 		"password": "anak_imba123",
 		"nim": "13520000"
+	},
+	"line_token": {
+		"A_VERY_SECRET_TOKEN_YOU_SHOULDVE_NOT_SHARE_TO_ME"
 	}
 }
 ```
-Response:
+Response (JSON):
 ```
 {
 	"code": "4",
@@ -39,8 +44,8 @@ Response:
 
 ### Other Info
 nim is optional
+line_token is optional, will send line notif in case of timeout
 default PORT is 5000
-
 
 ### Tips
 Create windows start service to [run server in background](https://stackoverflow.com/questions/32808730/running-python-script-as-a-windows-background-process):

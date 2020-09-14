@@ -34,6 +34,7 @@ def presence(username, password, success_callback=lambda: None, delay=8, headles
         if executable_path is not None:
             args["executable_path"] = executable_path
         driver = webdriver.Firefox(**args)
+        driver.implicitly_wait(0.1)
         actions = ActionChains(driver)
 
         # Main page

@@ -1,4 +1,5 @@
 import os
+import requests
 from selenium.webdriver.firefox.options import Options
 from flask import Flask, jsonify, request, abort
 app = Flask(__name__)
@@ -16,8 +17,18 @@ message = {
 }
 
 option = Options()
-option.add_argument("--headless")
 exec_path = None
+
+def send_line_message(token, message):
+    url = 'https://notify-api.line.me/api/notify'
+    headers = {
+        "Authorization": "Bearer " + str(token)
+    }
+    data = {
+        "message": message
+    }
+    requests.post(url, headers=headers, data=data)
+
 
 @app.route("/", methods=["POST"])
 def main():
@@ -31,9 +42,14 @@ def main():
         "options": option,
     }
     app.logger.info("Username: " + args["username"])
-
     code, classname = presence(**args)
     app.logger.info("Finished with code: " + str(code) + " | " + message[code])
+
+    if "line_token" in request.json:
+        if code == 4:
+            send_line_message(request.json["line_token"], "Successful presence on " + classname + "class")
+        else:
+            send_line_message(request.json["line_token"], "Fail presence. Reason: " + message[code])
 
     return jsonify({
         "code": code,
