@@ -21,6 +21,7 @@ def main():
         "username": request.json["credentials"]["username"],
         "password": request.json["credentials"]["password"],
         "logging": app.logger,
+        "headless": False
     }
     app.logger.info("Username: " + args["username"])
     code, classname = presence(**args)
