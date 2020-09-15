@@ -35,11 +35,17 @@ def presence(username, password, success_callback=lambda: None, delay=8, headles
             args["executable_path"] = executable_path
         driver = None
         cnt = 0
-        while not driver and cnt < 10:
+        error = None
+        while driver is None and cnt < 10:
             try:
                 driver = webdriver.Firefox(**args)
-            except Exception:
+                break
+            except Exception as e:
                 cnt += 1
+                error = e
+        else:
+            logging.error("Fail to init webdriver | " + str(error))
+            raise error
         driver.implicitly_wait(0.1)
         actions = ActionChains(driver)
 
