@@ -75,6 +75,7 @@ if __name__ != "__main__":
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
     option.binary_location = os.getenv('FIREFOX_BIN')
+    option.add_argument('--headless')
     option.add_argument('--disable-gpu')
     option.add_argument('--no-sandbox')
     exec_path = os.getenv('GECKODRIVER_BIN')
