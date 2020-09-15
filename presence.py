@@ -44,7 +44,7 @@ def presence(username, password, success_callback=lambda: None, delay=8, headles
                 cnt += 1
                 error = e
         else:
-            logging.error("Fail to init webdriver | " + str(error))
+            logging.error("Fail to init webdriver (" + str(cnt) + "x) | " + str(error))
             raise error
         driver.implicitly_wait(0.1)
         actions = ActionChains(driver)
