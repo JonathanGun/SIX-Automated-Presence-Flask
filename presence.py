@@ -125,5 +125,5 @@ def presence(username, password, success_callback=lambda: None, delay=8, headles
     except Exception as exc:
         logging.exception(exc)
     finally:
-        time.sleep(5)
-        driver.close()
+        if driver is not None:
+            driver.close()
