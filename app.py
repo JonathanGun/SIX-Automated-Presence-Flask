@@ -14,6 +14,7 @@ message = {
     3: "Presence form not opened yet",
     4: "Presence form filled successfully",
     5: "Presence form already filled",
+    6: "Failed to run",
 }
 
 option = Options()
@@ -42,20 +43,29 @@ def main():
         "options": option,
     }
     app.logger.info("Username: " + args["username"])
-    code, classname = presence(**args)
-    app.logger.info("Finished with code: " + str(code) + " | " + message[code])
+    try:
+        code, classname = presence(**args)
+        app.logger.info("Finished with code: " + str(code) + " | " + message[code])
 
-    if "line_token" in request.json:
-        if code == 4:
-            send_line_message(request.json["line_token"], "Successful presence on " + classname + "class")
-        else:
-            send_line_message(request.json["line_token"], "Fail presence. Reason: " + message[code])
+        if "line_token" in request.json:
+            if code == 4:
+                send_line_message(request.json["line_token"], "Successful presence on " + classname + "class")
+            else:
+                send_line_message(request.json["line_token"], "Fail presence. Reason: " + message[code])
 
-    return jsonify({
-        "code": code,
-        "class": classname,
-        "message": message[code],
-    }), 200
+        return jsonify({
+            "code": code,
+            "class": classname,
+            "message": message[code],
+        }), 200
+    except Exception as e:
+        code = 6
+        if "line_token" in request.json:
+            send_line_message(request.json["line_token"], "Fail to run. Reason: " + str(e))
+        return jsonify({
+            "code": code,
+            "message": message[code] + " | " + str(e),
+        }), 500
 
 if __name__ == "__main__":
     app.run(debug=False)
