@@ -18,6 +18,7 @@ message = {
 }
 
 option = Options()
+option.add_argument('--headless')
 exec_path = None
 
 def send_line_message(token, message):
@@ -51,7 +52,7 @@ def main():
             if code == 4:
                 send_line_message(request.json["line_token"], "Successful presence on " + classname + "class")
             else:
-                send_line_message(request.json["line_token"], "Fail presence. Reason: " + message[code])
+                send_line_message(request.json["line_token"], "Fail presence. Reason: " + message[code] + f"on {classname} class" if code - - 5 else "")
 
         return jsonify({
             "code": code,
@@ -75,7 +76,6 @@ if __name__ != "__main__":
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
     option.binary_location = os.getenv('FIREFOX_BIN')
-    option.add_argument('--headless')
     option.add_argument('--disable-gpu')
     option.add_argument('--no-sandbox')
     exec_path = os.getenv('GECKODRIVER_BIN')

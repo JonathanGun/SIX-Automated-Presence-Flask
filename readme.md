@@ -1,13 +1,18 @@
 # SIX Automated Presence - Flask Server
 Modified version of [SIX Automated Presence](https://github.com/mkamadeus/SIX-Automated-Presence)
+
 Thank you [Matthew Kevin (MK)](https://github.com/mkamadeus/) for doing all the heavy lifting
 
 ## Prerequisites
 - Python
+- geckodriver and Firefox
 - selenium
 - flask
 
+
 ## Setup
+Please follow [Original SIX Automated Presence](https://github.com/mkamadeus/SIX-Automated-Presence) setup first, then continue below
+
 1. Install Requirements
 ```bash
 python -m pip install -r requirements.txt
@@ -16,23 +21,25 @@ python -m pip install -r requirements.txt
 ```bash
 python app.py
 ```
-3. POST
+3. Do POST request to `http://localhost:5000/`
+Header:
 ```
-/POST http://localhost:5000/
-"headers": {
+{
   "Content-Type": "application/json",
-},
-"payload": {
+}
+```
+Payload:
+```
+{
 	"credentials": {
 		"username": "anak_imba",
 		"password": "anak_imba123",
 		"nim": "13520000"
 	},
-	"line_token": {
-		"A_VERY_SECRET_TOKEN_YOU_SHOULDVE_NOT_SHARE_TO_ME"
-	}
+	"line_token": "A_VERY_SECRET_TOKEN_YOU_SHOULDVE_NOT_SHARE_TO_ME"
 }
 ```
+4. Wait for driver to complete(approx 30 seconds)
 Response (JSON):
 ```
 {
@@ -43,9 +50,9 @@ Response (JSON):
 ```
 
 ### Other Info
-nim is optional
-line_token is optional, will send line notif in case of timeout
-default PORT is 5000
+- nim is optional
+- line_token is optional, will send line notif in case of timeout
+- default PORT is 5000
 
 ### Tips
 Create windows start service to [run server in background](https://stackoverflow.com/questions/32808730/running-python-script-as-a-windows-background-process):
